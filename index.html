@@ -2,10 +2,18 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
+    <!-- 添加 viewport 声明解决移动端适配问题 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>小熊的告白</title>
     <style>
-        body {
+        /* 通用重置 */
+        * {
+            box-sizing: border-box;
             margin: 0;
+            padding: 0;
+        }
+
+        body {
             height: 100vh;
             display: flex;
             justify-content: center;
@@ -15,30 +23,42 @@
             overflow: hidden;
         }
 
-        #screen1 {
-            text-align: center;
-            position: relative;
+        /* 图片响应式处理 */
+        .main-img {
+            max-width: 80%;  /* 移动端最大显示宽度 */
+            height: auto;    /* 保持比例 */
+            margin: 20px 0;
+            /* 调试边框（完成后可删除） */
+            border: 1px solid #eee;
         }
 
-        .main-img {
-            width: 300px;
-            margin-bottom: 20px;
+        /* 第一屏布局 */
+        #screen1 {
+            text-align: center;
+            padding: 20px;
+            width: 100%;
+        }
+
+        h1 {
+            font-size: 1.5rem; /* 移动端适配字号 */
+            margin: 15px 0;
+            color: #333;
         }
 
         .buttons {
-            margin-top: 20px;
+            margin-top: 25px;
             display: flex;
-            gap: 20px;
+            flex-wrap: wrap; /* 移动端换行保护 */
+            gap: 15px;
             justify-content: center;
         }
 
         button {
-            padding: 10px 30px;
-            font-size: 18px;
+            padding: 12px 35px;
+            font-size: 1.1rem;
             border: none;
             border-radius: 25px;
-            cursor: pointer;
-            transition: all 0.3s;
+            min-width: 100px; /* 按钮最小宽度 */
         }
 
         #yesBtn {
@@ -51,30 +71,34 @@
             color: white;
         }
 
+        /* 第二屏样式 */
         #screen2 {
             display: none;
             text-align: center;
+            padding: 20px;
+            width: 100%;
         }
 
         .love-text {
-            font-size: 48px;
+            font-size: 2.5rem;
             color: #ff1493;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-            position: relative;
-            height: 200px;
-            margin-bottom: 50px;
+            margin: 30px 0;
+            display: flex;
+            justify-content: center;
+            gap: 20px; /* 字间距 */
         }
 
-        .love-text span {
-            position: absolute;
-            left: 50%;
-            transform-origin: bottom center;
-            animation: float 2s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-20px); }
+        /* 电脑端专属样式 */
+        @media (min-width: 768px) {
+            .main-img {
+                max-width: 300px; /* 电脑端固定宽度 */
+            }
+            h1 {
+                font-size: 2rem;
+            }
+            .love-text {
+                font-size: 3.5rem;
+            }
         }
     </style>
 </head>
@@ -90,14 +114,34 @@
 
     <div id="screen2">
         <div class="love-text">
-            <span style="left: 20%">我</span>
-            <span style="left: 50%">爱</span>
-            <span style="left: 80%">你</span>
+            <span>我</span>
+            <span>爱</span>
+            <span>你</span>
         </div>
         <img src="images/heart.png" alt="爱心" class="main-img">
     </div>
 
     <script>
+        // 图片预加载和错误处理
+        function loadImage(src) {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.src = src;
+                img.onload = resolve;
+                img.onerror = reject;
+            });
+        }
+
+        // 初始化加载
+        Promise.all([
+            loadImage('images/bear.png'),
+            loadImage('images/heart.png')
+        ]).catch(error => {
+            console.error('图片加载失败:', error);
+            alert('图片加载失败，请检查网络连接！');
+        });
+
+        // 按钮交互逻辑
         let clickCount = 0;
         const noMessages = ["你确定吗？", "再想想嘛~", "真的不要吗？", "最后问一次！", "没有后悔药哦！"];
         
@@ -111,12 +155,6 @@
         document.getElementById('yesBtn').addEventListener('click', function() {
             document.getElementById('screen1').style.display = 'none';
             document.getElementById('screen2').style.display = 'block';
-            
-            // 添加心跳动画
-            setInterval(() => {
-                document.querySelector('.love-text').style.transform = 
-                    `scale(${Math.random() * 0.2 + 0.9})`;
-            }, 300);
         });
     </script>
 </body>
