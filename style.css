@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的诗意空间</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>唐诗雅韵</h1>
+        </header>
+        
+        <main>
+            <div class="poem-box" id="poemContainer">
+                <p id="poemLine1">春眠不觉晓</p>
+                <p id="poemLine2">处处闻啼鸟</p>
+            </div>
+        </main>
+
+        <footer>
+            <button onclick="changePoem()">换一首</button>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
