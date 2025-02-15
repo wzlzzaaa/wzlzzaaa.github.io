@@ -1,29 +1,45 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>我的诗意空间</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <div class="container">
-        <header>
-            <h1>唐诗雅韵</h1>
-        </header>
-        
-        <main>
-            <div class="poem-box" id="poemContainer">
-                <p id="poemLine1">春眠不觉晓</p>
-                <p id="poemLine2">处处闻啼鸟</p>
-            </div>
-        </main>
+body {
+    margin: 0;
+    padding: 0;
+    background: #f0f0f0;
+    font-family: '楷体', Kaiti, serif;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
-        <footer>
-            <button onclick="changePoem()">换一首</button>
-        </footer>
-    </div>
+.container {
+    width: 90%;
+    max-width: 600px;
+    text-align: center;
+}
 
-    <script src="script.js"></script>
-</body>
-</html>
+.poem-box {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    margin: 2rem 0;
+}
+
+button {
+    padding: 10px 30px;
+    background: #4CAF50;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+button:hover {
+    background: #45a049;
+}
+
+@media (max-width: 480px) {
+    .poem-box {
+        padding: 1rem;
+    }
+}
