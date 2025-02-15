@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>可爱小熊的请求</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #ffe6f2;
+            font-family: 'Comic Sans MS', cursive;
+        }
+
+        .container {
+            position: relative;
+            text-align: center;
+        }
+
+        /* 小熊样式 */
+        .bear {
+            position: relative;
+            width: 300px;
+            height: 300px;
+        }
+
+        /* 小熊头部 */
+        .head {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            background: #ffb6c1;
+            border-radius: 50%;
+            top: 50px;
+            left: 50px;
+        }
+
+        /* 耳朵 */
+        .ear {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background: #ffb6c1;
+            border-radius: 50%;
+        }
+
+        .ear.left { left: 20px; top: 20px; }
+        .ear.right { right: 20px; top: 20px; }
+
+        /* 眼睛 */
+        .eye {
+            position: absolute;
+            width: 30px;
+            height: 20px;
+            background: #000;
+            border-radius: 50%;
+            top: 90px;
+        }
+
+        .eye.left { left: 70px; }
+        .eye.right { right: 70px; }
+
+        /* 鼻子 */
+        .nose {
+            position: absolute;
+            width: 40px;
+            height: 30px;
+            background: #ff69b4;
+            border-radius: 50%;
+            top: 120px;
+            left: 130px;
+        }
+
+        /* 嘴巴 */
+        .mouth {
+            position: absolute;
+            width: 80px;
+            height: 40px;
+            border: 3px solid #ff69b4;
+            border-radius: 0 0 40px 40px;
+            border-top: 0;
+            top: 160px;
+            left: 110px;
+        }
+
+        .question {
+            position: absolute;
+            top: -40px;
+            width: 100%;
+            font-size: 24px;
+            color: #ff1493;
+        }
+
+        .buttons {
+            margin-top: 20px;
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        button {
+            padding: 10px 30px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: all 0.3s;
+        }
+
+        #yesBtn {
+            background: #ff69b4;
+            color: white;
+        }
+
+        #noBtn {
+            background: #ffb6c1;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="question">要做我的女朋友吗？</div>
+        <div class="bear">
+            <div class="ear left"></div>
+            <div class="ear right"></div>
+            <div class="head">
+                <div class="eye left"></div>
+                <div class="eye right"></div>
+                <div class="nose"></div>
+                <div class="mouth"></div>
+            </div>
+        </div>
+        <div class="buttons">
+            <button id="yesBtn">是</button>
+            <button id="noBtn">否</button>
+        </div>
+    </div>
+
+    <script>
+        const yesBtn = document.getElementById('yesBtn');
+        const noBtn = document.getElementById('noBtn');
+        const messages = ["你想好了吗", "再想想嘛", "真的不再考虑？", "给个机会嘛", "确定不要嘛"];
+        let messageIndex = 0;
+
+        noBtn.addEventListener('click', function() {
+            // 放大"是"按钮
+            yesBtn.style.transform = `scale(${1 + messageIndex*0.2})`;
+            yesBtn.style.transition = 'transform 0.3s';
+            
+            // 改变"否"按钮文字
+            noBtn.textContent = messages[messageIndex % messages.length];
+            messageIndex++;
+            
+            // 添加晃动效果
+            noBtn.style.animation = 'shake 0.5s';
+            setTimeout(() => noBtn.style.animation = '', 500);
+        });
+
+        yesBtn.addEventListener('click', function() {
+            alert('我爱你！❤️');
+            // 重置按钮状态
+            yesBtn.style.transform = 'scale(1)';
+            noBtn.textContent = '否';
+            messageIndex = 0;
+        });
+
+        // 添加晃动动画
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes shake {
+                0% { transform: translateX(0); }
+                25% { transform: translateX(-5px); }
+                50% { transform: translateX(5px); }
+                75% { transform: translateX(-5px); }
+                100% { transform: translateX(0); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
