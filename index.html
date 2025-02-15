@@ -2,6 +2,7 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>可爱小熊的请求</title>
     <style>
         body {
@@ -10,13 +11,15 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background-color: #ffe6f2;
+            background: linear-gradient(135deg, #ffe6f2 0%, #ffd1e6 100%);
             font-family: 'Comic Sans MS', cursive;
+            overflow: hidden;
         }
 
         .container {
             position: relative;
             text-align: center;
+            padding: 20px;
         }
 
         /* 小熊样式 */
@@ -24,9 +27,9 @@
             position: relative;
             width: 300px;
             height: 300px;
+            margin: 0 auto;
         }
 
-        /* 小熊头部 */
         .head {
             position: absolute;
             width: 200px;
@@ -35,34 +38,34 @@
             border-radius: 50%;
             top: 50px;
             left: 50px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
 
-        /* 耳朵 */
         .ear {
             position: absolute;
             width: 60px;
             height: 60px;
             background: #ffb6c1;
             border-radius: 50%;
+            z-index: 2;
         }
 
         .ear.left { left: 20px; top: 20px; }
         .ear.right { right: 20px; top: 20px; }
 
-        /* 眼睛 */
         .eye {
             position: absolute;
             width: 30px;
             height: 20px;
-            background: #000;
+            background: #333;
             border-radius: 50%;
             top: 90px;
+            animation: blink 4s infinite;
         }
 
         .eye.left { left: 70px; }
         .eye.right { right: 70px; }
 
-        /* 鼻子 */
         .nose {
             position: absolute;
             width: 40px;
@@ -73,7 +76,6 @@
             left: 130px;
         }
 
-        /* 嘴巴 */
         .mouth {
             position: absolute;
             width: 80px;
@@ -83,6 +85,7 @@
             border-top: 0;
             top: 160px;
             left: 110px;
+            animation: smile 2s infinite;
         }
 
         .question {
@@ -91,38 +94,69 @@
             width: 100%;
             font-size: 24px;
             color: #ff1493;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
         }
 
         .buttons {
-            margin-top: 20px;
+            margin-top: 30px;
             display: flex;
-            gap: 20px;
+            gap: 30px;
             justify-content: center;
+            min-width: 450px;
+            flex-wrap: wrap;
         }
 
         button {
-            padding: 10px 30px;
+            padding: 12px 35px;
             border: none;
-            border-radius: 20px;
+            border-radius: 25px;
             cursor: pointer;
             font-size: 18px;
             transition: all 0.3s;
+            flex-shrink: 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
 
         #yesBtn {
-            background: #ff69b4;
+            background: linear-gradient(45deg, #ff69b4, #ff1493);
             color: white;
         }
 
         #noBtn {
-            background: #ffb6c1;
+            background: linear-gradient(45deg, #ffb6c1, #ff85a2);
             color: white;
+        }
+
+        @media (max-width: 480px) {
+            .bear { transform: scale(0.8); }
+            .buttons {
+                min-width: 300px;
+                gap: 20px;
+            }
+            button { padding: 10px 25px; }
+        }
+
+        @keyframes shake {
+            0%,100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+        }
+
+        @keyframes blink {
+            0%, 90%, 100% { height: 20px; }
+            95% { height: 2px; }
+        }
+
+        @keyframes smile {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(3px); }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="question">要做我的女朋友吗？</div>
+        <div class="question">❤️ 要做我的女朋友吗？ ❤️</div>
         <div class="bear">
             <div class="ear left"></div>
             <div class="ear right"></div>
@@ -142,40 +176,61 @@
     <script>
         const yesBtn = document.getElementById('yesBtn');
         const noBtn = document.getElementById('noBtn');
-        const messages = ["你想好了吗", "再想想嘛", "真的不再考虑？", "给个机会嘛", "确定不要嘛"];
+        const messages = ["你想好了吗？", "再想想嘛～", "真的不考虑？", "给个机会嘛", "不要拒绝我嘛"];
         let messageIndex = 0;
+        let currentScale = 1;
 
         noBtn.addEventListener('click', function() {
-            // 放大"是"按钮
-            yesBtn.style.transform = `scale(${1 + messageIndex*0.2})`;
-            yesBtn.style.transition = 'transform 0.3s';
+            // 限制最大放大倍数
+            if(currentScale < 1.8) {
+                currentScale += 0.2;
+                yesBtn.style.transform = `scale(${currentScale})`;
+            }
             
-            // 改变"否"按钮文字
+            // 动态调整间距
+            const buttons = document.querySelector('.buttons');
+            buttons.style.gap = `${30 + messageIndex*4}px`;
+            
+            // 更新提示文字
             noBtn.textContent = messages[messageIndex % messages.length];
             messageIndex++;
             
-            // 添加晃动效果
+            // 晃动效果
             noBtn.style.animation = 'shake 0.5s';
             setTimeout(() => noBtn.style.animation = '', 500);
         });
 
         yesBtn.addEventListener('click', function() {
-            alert('我爱你！❤️');
-            // 重置按钮状态
-            yesBtn.style.transform = 'scale(1)';
-            noBtn.textContent = '否';
-            messageIndex = 0;
+            // 创建爱心特效
+            const heart = document.createElement('div');
+            heart.style.position = 'absolute';
+            heart.style.left = `${yesBtn.offsetLeft + yesBtn.offsetWidth/2}px`;
+            heart.style.top = `${yesBtn.offsetTop}px`;
+            heart.style.fontSize = '24px';
+            heart.style.animation = 'float 2s ease-out';
+            heart.innerHTML = '❤️';
+            document.body.appendChild(heart);
+            
+            setTimeout(() => {
+                alert('我爱你！❤️\n你让我的世界都变甜了！');
+                // 重置状态
+                yesBtn.style.transform = 'scale(1)';
+                noBtn.textContent = '否';
+                messageIndex = 0;
+                currentScale = 1;
+                document.querySelector('.buttons').style.gap = '30px';
+                document.querySelectorAll('div').forEach(div => {
+                    if(div.style.animation.includes('float')) div.remove();
+                });
+            }, 800);
         });
 
-        // 添加晃动动画
+        // 添加漂浮动画
         const style = document.createElement('style');
         style.textContent = `
-            @keyframes shake {
-                0% { transform: translateX(0); }
-                25% { transform: translateX(-5px); }
-                50% { transform: translateX(5px); }
-                75% { transform: translateX(-5px); }
-                100% { transform: translateX(0); }
+            @keyframes float {
+                0% { transform: translateY(0) scale(1); opacity: 1; }
+                100% { transform: translateY(-100px) scale(0); opacity: 0; }
             }
         `;
         document.head.appendChild(style);
