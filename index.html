@@ -1,16 +1,123 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>合成大西瓜</title>
-    <link rel="stylesheet" href="style.css">
+    <title>小熊的告白</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: white;
+            font-family: '微软雅黑', sans-serif;
+            overflow: hidden;
+        }
+
+        #screen1 {
+            text-align: center;
+            position: relative;
+        }
+
+        .main-img {
+            width: 300px;
+            margin-bottom: 20px;
+        }
+
+        .buttons {
+            margin-top: 20px;
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        button {
+            padding: 10px 30px;
+            font-size: 18px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        #yesBtn {
+            background-color: #ff69b4;
+            color: white;
+        }
+
+        #noBtn {
+            background-color: #808080;
+            color: white;
+        }
+
+        #screen2 {
+            display: none;
+            text-align: center;
+        }
+
+        .love-text {
+            font-size: 48px;
+            color: #ff1493;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            position: relative;
+            height: 200px;
+            margin-bottom: 50px;
+        }
+
+        .love-text span {
+            position: absolute;
+            left: 50%;
+            transform-origin: bottom center;
+            animation: float 2s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+    </style>
 </head>
 <body>
-    <div id="game-container">
-        <div id="game-board"></div>
-        <div id="score">分数: 0</div>
+    <div id="screen1">
+        <img src="images/bear.png" alt="小熊" class="main-img">
+        <h1>要做我的女朋友吗？</h1>
+        <div class="buttons">
+            <button id="yesBtn">是</button>
+            <button id="noBtn">否</button>
+        </div>
     </div>
-    <script src="script.js"></script>
+
+    <div id="screen2">
+        <div class="love-text">
+            <span style="left: 20%">我</span>
+            <span style="left: 50%">爱</span>
+            <span style="left: 80%">你</span>
+        </div>
+        <img src="images/heart.png" alt="爱心" class="main-img">
+    </div>
+
+    <script>
+        let clickCount = 0;
+        const noMessages = ["你确定吗？", "再想想嘛~", "真的不要吗？", "最后问一次！", "没有后悔药哦！"];
+        
+        document.getElementById('noBtn').addEventListener('click', function() {
+            const yesBtn = document.getElementById('yesBtn');
+            yesBtn.style.transform = `scale(${1 + clickCount * 0.3})`;
+            this.textContent = noMessages[clickCount % noMessages.length];
+            clickCount++;
+        });
+
+        document.getElementById('yesBtn').addEventListener('click', function() {
+            document.getElementById('screen1').style.display = 'none';
+            document.getElementById('screen2').style.display = 'block';
+            
+            // 添加心跳动画
+            setInterval(() => {
+                document.querySelector('.love-text').style.transform = 
+                    `scale(${Math.random() * 0.2 + 0.9})`;
+            }, 300);
+        });
+    </script>
 </body>
 </html>
