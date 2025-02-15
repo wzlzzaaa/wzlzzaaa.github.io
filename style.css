@@ -1,0 +1,80 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    background: linear-gradient(135deg, #aad450, #8cc63f);
+    min-height: 100vh;
+    overflow: hidden;
+    font-family: 'Arial', 'Microsoft YaHei', sans-serif;
+    touch-action: none;
+}
+
+#game-container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+#game-area {
+    width: 100%;
+    height: calc(100% - 80px);
+    position: relative;
+    margin-top: 20px;
+}
+
+#score-box {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    font-size: 24px;
+    color: #fff;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    padding: 8px 15px;
+    background: rgba(0,0,0,0.2);
+    border-radius: 10px;
+    z-index: 100;
+}
+
+#next-fruit-box {
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    width: 60px;
+    height: 60px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 10px;
+    padding: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.fruit {
+    position: absolute;
+    cursor: move;
+    transition: 
+        left 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+        top 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+        transform 0.3s ease;
+    user-select: none;
+    image-rendering: crisp-edges;
+    will-change: transform;
+}
+
+@media (max-width: 500px) {
+    #score-box {
+        font-size: 18px;
+        padding: 6px 12px;
+    }
+    
+    #next-fruit-box {
+        width: 50px;
+        height: 50px;
+    }
+}
