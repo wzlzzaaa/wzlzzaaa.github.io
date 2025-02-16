@@ -210,7 +210,7 @@
     <div class="music-control" id="musicControl">🎵</div>
 
     <!-- 第一屏 -->
-    <div id="screen1" class="screen">
+    <div id="screen1" class="screen visible">
         <div class="image-container">
             <img src="images/no1.png" class="main-img active" alt="小熊1" decoding="async">
             <img src="images/no2.png" class="main-img" alt="小熊2" decoding="async">
@@ -272,9 +272,7 @@
                 }, 500);
 
                 // 显示页面内容
-                document.querySelectorAll('.screen').forEach(screen => {
-                    screen.classList.add('visible');
-                });
+                document.getElementById('screen1').classList.add('visible');
             });
 
             imagesList.forEach(promise => {
