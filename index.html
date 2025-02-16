@@ -2,15 +2,14 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <!-- 添加 viewport 声明解决移动端适配问题 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>wz的告白</title>
     <style>
-        /* 通用重置 */
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+            transition: all 0.5s ease-in-out;
         }
 
         body {
@@ -23,34 +22,47 @@
             overflow: hidden;
         }
 
-        /* 图片响应式处理 */
-        .main-img {
-            max-width: 80%;  /* 移动端最大显示宽度 */
-            height: auto;    /* 保持比例 */
-            margin: 20px 0;
-            /* 调试边框（完成后可删除） */
-            border: 1px solid #eee;
+        .screen {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 1;
+            visibility: visible;
+            transition: 
+                opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+                visibility 0.8s linear;
         }
 
-        /* 第一屏布局 */
-        #screen1 {
-            text-align: center;
-            padding: 20px;
-            width: 100%;
+        .screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .main-img {
+            max-width: 80%;
+            height: auto;
+            margin: 20px 0;
+            filter: drop-shadow(0 5px 15px rgba(0,0,0,0.1));
+            transform: translateY(0);
         }
 
         h1 {
-            font-size: 1.5rem; /* 移动端适配字号 */
+            font-size: 1.5rem;
             margin: 15px 0;
             color: #333;
+            opacity: 1;
+            transform: translateY(0);
         }
 
         .buttons {
             margin-top: 25px;
             display: flex;
-            flex-wrap: wrap; /* 移动端换行保护 */
             gap: 15px;
-            justify-content: center;
         }
 
         button {
@@ -58,7 +70,9 @@
             font-size: 1.1rem;
             border: none;
             border-radius: 25px;
-            min-width: 100px; /* 按钮最小宽度 */
+            min-width: 100px;
+            transform: scale(1);
+            cursor: pointer;
         }
 
         #yesBtn {
@@ -71,27 +85,27 @@
             color: white;
         }
 
-        /* 第二屏样式 */
-        #screen2 {
-            display: none;
-            text-align: center;
-            padding: 20px;
-            width: 100%;
-        }
-
         .love-text {
             font-size: 2.5rem;
             color: #ff1493;
             margin: 30px 0;
             display: flex;
-            justify-content: center;
-            gap: 20px; /* 字间距 */
+            gap: 20px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: textReveal 1s ease forwards 0.5s;
         }
 
-        /* 电脑端专属样式 */
+        @keyframes textReveal {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
         @media (min-width: 768px) {
             .main-img {
-                max-width: 300px; /* 电脑端固定宽度 */
+                max-width: 300px;
             }
             h1 {
                 font-size: 2rem;
@@ -103,7 +117,7 @@
     </style>
 </head>
 <body>
-    <div id="screen1">
+    <div id="screen1" class="screen">
         <img src="images/bear.png" alt="小熊" class="main-img">
         <h1>要爱我一辈子吗？</h1>
         <div class="buttons">
@@ -112,7 +126,7 @@
         </div>
     </div>
 
-    <div id="screen2">
+    <div id="screen2" class="screen hidden">
         <div class="love-text">
             <span>我</span>
             <span>爱</span>
@@ -122,39 +136,50 @@
     </div>
 
     <script>
-        // 图片预加载和错误处理
-        function loadImage(src) {
-            return new Promise((resolve, reject) => {
-                const img = new Image();
-                img.src = src;
-                img.onload = resolve;
-                img.onerror = reject;
+        // 预加载图片
+        const preloadImages = () => {
+            const images = ['images/bear.png', 'images/heart.png'];
+            images.forEach(src => {
+                new Image().src = src;
             });
-        }
+        };
+        preloadImages();
 
-        // 初始化加载
-        Promise.all([
-            loadImage('images/bear.png'),
-            loadImage('images/heart.png')
-        ]).catch(error => {
-            console.error('图片加载失败:', error);
-            alert('图片加载失败，请检查网络连接！');
-        });
-
-        // 按钮交互逻辑
         let clickCount = 0;
         const noMessages = ["你确定吗？", "再想想嘛~", "真的不要吗？", "最后问一次！", "没有后悔药哦！"];
         
+        // 否按钮交互
         document.getElementById('noBtn').addEventListener('click', function() {
             const yesBtn = document.getElementById('yesBtn');
-            yesBtn.style.transform = `scale(${1 + clickCount * 0.3})`;
+            const scale = 1 + Math.min(clickCount * 0.3, 1.5);
+            yesBtn.style.transform = `scale(${scale})`;
             this.textContent = noMessages[clickCount % noMessages.length];
             clickCount++;
         });
 
+        // 是按钮交互
         document.getElementById('yesBtn').addEventListener('click', function() {
-            document.getElementById('screen1').style.display = 'none';
-            document.getElementById('screen2').style.display = 'block';
+            const screen1 = document.getElementById('screen1');
+            const screen2 = document.getElementById('screen2');
+            
+            // 第一屏渐出
+            screen1.classList.add('hidden');
+            
+            // 第二屏延迟渐入
+            setTimeout(() => {
+                screen2.classList.remove('hidden');
+            }, 500);
+
+            // 按钮缩放重置
+            this.style.transform = 'scale(1)';
+        });
+
+        // 图片加载监控
+        document.querySelectorAll('img').forEach(img => {
+            img.onerror = () => {
+                img.style.opacity = '0.5';
+                img.style.filter = 'grayscale(100%)';
+            };
         });
     </script>
 </body>
