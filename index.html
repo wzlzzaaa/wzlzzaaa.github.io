@@ -20,23 +20,26 @@
             background-color: #fff;
             font-family: '微软雅黑', sans-serif;
             overflow: hidden;
+            position: relative;
         }
 
-        .loading-screen {
+        /* 加载进度条 */
+        .progress-bar-container {
             position: fixed;
-            top: 0;
+            bottom: 0;
             left: 0;
             width: 100%;
-            height: 100%;
-            background-color: #fff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            height: 4px;
+            background-color: #f3f3f3;
+            transition: none;
             z-index: 1000;
         }
 
-        .loading-screen.hidden {
-            display: none;
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background-image: linear-gradient(45deg, #ff69b4, #ff1493);
+            transition: width 0.3s ease;
         }
 
         .screen {
@@ -193,9 +196,9 @@
     <link rel="preload" as="image" href="images/yes.png">
 </head>
 <body>
-    <!-- 加载界面 -->
-    <div class="loading-screen" id="loadingScreen">
-        <h1>加载中...</h1>
+    <!-- 加载进度条 -->
+    <div class="progress-bar-container">
+        <div class="progress-bar" id="progressBar"></div>
     </div>
 
     <!-- 音乐播放器 -->
@@ -233,14 +236,52 @@
     </div>
 
     <script>
-        // 增加加载界面
-        const loadingScreen = document.getElementById('loadingScreen');
+        // 加载进度条
+        const progressBar = document.getElementById('progressBar');
 
-        // 监听页面加载完成事件
+        // 图片预加载
         window.addEventListener('load', () => {
-            loadingScreen.classList.add('hidden');
-            document.querySelectorAll('.screen').forEach(screen => {
-                screen.classList.add('visible');
+            const imagesToPreload = [
+                'images/no2.png',
+                'images/no3.png',
+                'images/no4.png',
+                'images/no5.png',
+                'images/yes.png'
+            ];
+
+            let loadedCount = 0;
+            const imagesList = imagesToPreload.map(src => {
+                return new Promise((resolve) => {
+                    const img = new Image();
+                    img.src = src;
+                    img.onload = () => resolve();
+                });
+            });
+
+            // 更新进度条
+            const updateProgress = () => {
+                const progress = (loadedCount / imagesToPreload.length) * 100;
+                progressBar.style.width = `${progress}%`;
+            };
+
+            Promise.all(imagesList).then(() => {
+                // 隐藏进度条
+                progressBar.style.opacity = '0';
+                setTimeout(() => {
+                    progressBar.style.display = 'none';
+                }, 500);
+
+                // 显示页面内容
+                document.querySelectorAll('.screen').forEach(screen => {
+                    screen.classList.add('visible');
+                });
+            });
+
+            imagesList.forEach(promise => {
+                promise.then(() => {
+                    loadedCount++;
+                    updateProgress();
+                });
             });
         });
 
@@ -262,22 +303,6 @@
         musicControl.addEventListener('click', () => {
             bgMusic.paused ? bgMusic.play() : bgMusic.pause();
             musicControl.textContent = bgMusic.paused ? '🔇' : '🔊';
-        });
-
-        // 图片预加载
-        window.addEventListener('load', () => {
-            const imagesToPreload = [
-                'images/no2.png',
-                'images/no3.png',
-                'images/no4.png',
-                'images/no5.png'
-            ];
-
-            imagesToPreload.forEach(src => {
-                const img = new Image();
-                img.src = src;
-                img.fetchPriority = 'high';
-            });
         });
 
         // 原有交互逻辑
