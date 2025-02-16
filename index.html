@@ -47,14 +47,6 @@
             transition: width 0.3s ease;
         }
 
-        .progress-text {
-            font-size: 14px;
-            color: #333;
-            text-align: center;
-            position: relative;
-            z-index: 10;
-        }
-
         .screen {
             position: absolute;
             width: 100%;
@@ -223,7 +215,7 @@
     <!-- 加载进度条 -->
     <div class="progress-bar-container">
         <div class="progress-bar" id="progressBar"></div>
-        <div class="progress-text">加载中...</div> <!-- 新增加载文字 -->
+        <!-- 移除加载中字样 -->
     </div>
 
     <!-- 音乐播放器 -->
@@ -315,7 +307,7 @@
         document.addEventListener('click', () => {
             if (isFirstClick) {
                 bgMusic.play().catch(() => {});
-                musicControl.textContent = bgMusic.paused ? '🔇' : '🔊';
+                musicControl.textContent = bgMusic.paused ? '🔇' : 'LOUD';
                 isFirstClick = false;
             }
         }, { once: true });
@@ -323,7 +315,7 @@
         // 音乐开关
         musicControl.addEventListener('click', () => {
             bgMusic.paused ? bgMusic.play() : bgMusic.pause();
-            musicControl.textContent = bgMusic.paused ? '🔇' : '🔊';
+            musicControl.textContent = bgMusic.paused ? '🔇' : 'LOUD';
         });
 
         // 原有交互逻辑
