@@ -164,12 +164,13 @@
         /* 新增文字内容样式 */
         .image-text {
             position: absolute;
-            top: 10px; /* 调整文字位置 */
+            top: 10px; /* 文字位于图片头顶 */
             width: 100%;
             text-align: center;
             color: #ff69b4; /* 粉色字体 */
             font-size: 18px;
             font-weight: bold;
+            z-index: 10; /* 确保文字在图片上方 */
         }
 
         /* 新增音乐控制样式 */
