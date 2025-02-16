@@ -119,6 +119,13 @@
             gap: 15px;
             margin: 30px 0;
             animation: textFloat 3s ease-in-out infinite;
+            z-index: 10; /* 确保文本在图片上方 */
+            position: relative; /* 添加相对定位以启用 z-index */
+        }
+
+        #screen2 .main-img {
+            position: relative; /* 修改为相对定位 */
+            margin-top: 20px; /* 添加一些间距 */
         }
 
         @keyframes textFloat {
