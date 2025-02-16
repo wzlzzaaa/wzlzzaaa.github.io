@@ -9,7 +9,7 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            transition: all 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+            transition: all 0.4s cubic-bezier(0.18 ,0.89, 0.32, 1.28);
         }
 
         body {
@@ -208,6 +208,7 @@
         yesBtn.addEventListener('click', () => {
             document.getElementById('screen1').classList.add('hidden');
             document.getElementById('screen2').classList.remove('hidden');
+            document.querySelector('#screen2 .main-img').classList.add('active'); // 确保图片显示
         });
 
         // 图片预加载
@@ -222,7 +223,14 @@
             ];
 
             preloadImages.forEach(src => {
-                new Image().src = src;
+                const img = new Image();
+                img.src = src;
+                img.onload = () => {
+                    console.log(`${src} 加载成功`);
+                };
+                img.onerror = () => {
+                    console.error(`${src} 加载失败`);
+                };
             });
         });
     </script>
