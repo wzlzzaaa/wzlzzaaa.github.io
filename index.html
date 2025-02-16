@@ -47,7 +47,7 @@
         .image-container {
             position: relative;
             width: min(90%, 400px);
-            height: 400px;
+            height: auto; /* 自动高度 */
             margin: 20px 0;
         }
 
@@ -55,12 +55,15 @@
             width: 100%;
             height: auto;
             object-fit: contain;
-            opacity: 0;
-            transition: opacity 0.8s ease;
+            opacity: 0; /* 默认隐藏 */
+            position: absolute;
+            top: 0;
+            left: 0;
+            transition: opacity 0.8s ease; /* 渐隐渐显效果 */
         }
 
         .main-img.active {
-            opacity: 1;
+            opacity: 1; /* 显示时的透明度 */
         }
 
         h1 {
@@ -184,10 +187,10 @@
             // 计算新索引
             currentImageIndex = (currentImageIndex + 1) % CONFIG.imageCount;
             
-            // 显示新图片
+            // 延迟显示新图片，确保渐隐效果完成
             setTimeout(() => {
                 images[currentImageIndex].classList.add('active');
-            }, 300);
+            }, 400); // 延迟时间应与CSS过渡时间一致
         }
 
         // 否按钮点击处理
