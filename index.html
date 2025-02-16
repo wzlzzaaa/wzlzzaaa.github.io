@@ -2,14 +2,15 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>wz的告白</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>WZ的告白</title>
     <style>
+        /* 全局重置和基础样式 */
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            transition: all 0.5s ease-in-out;
+            transition: all 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28);
         }
 
         body {
@@ -17,11 +18,13 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background-color: white;
+            background-color: #fff;
             font-family: '微软雅黑', sans-serif;
             overflow: hidden;
+            position: relative;
         }
 
+        /* 屏幕容器样式 */
         .screen {
             position: absolute;
             width: 100%;
@@ -33,8 +36,9 @@
             opacity: 1;
             visibility: visible;
             transition: 
-                opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 0.8s ease,
                 visibility 0.8s linear;
+            padding: 20px;
         }
 
         .screen.hidden {
@@ -43,143 +47,206 @@
             pointer-events: none;
         }
 
+        /* 图片样式 */
         .main-img {
-            max-width: 80%;
+            max-width: min(90%, 400px);
             height: auto;
             margin: 20px 0;
             filter: drop-shadow(0 5px 15px rgba(0,0,0,0.1));
             transform: translateY(0);
         }
 
+        /* 文字样式 */
         h1 {
-            font-size: 1.5rem;
+            font-size: clamp(1.5rem, 5vw, 2.5rem);
             margin: 15px 0;
             color: #333;
-            opacity: 1;
-            transform: translateY(0);
+            text-align: center;
+            line-height: 1.4;
         }
 
-        .buttons {
-            margin-top: 25px;
-            display: flex;
+        /* 按钮容器 */
+        .buttons-container {
+            margin-top: 30px;
+            display: grid;
             gap: 15px;
+            grid-template-columns: repeat(2, 1fr);
+            max-width: 500px;
+            width: 100%;
+            position: relative;
         }
 
-        button {
-            padding: 12px 35px;
-            font-size: 1.1rem;
+        /* 按钮基础样式 */
+        .btn {
+            padding: 12px 30px;
+            font-size: clamp(1rem, 4vw, 1.2rem);
             border: none;
-            border-radius: 25px;
-            min-width: 100px;
-            transform: scale(1);
+            border-radius: 30px;
             cursor: pointer;
+            transition: 
+                transform 0.3s ease,
+                filter 0.3s ease,
+                opacity 0.3s ease;
+            will-change: transform;
+            text-align: center;
         }
 
+        /* 是按钮 */
         #yesBtn {
-            background-color: #ff69b4;
+            background: linear-gradient(135deg, #ff69b4, #ff1493);
             color: white;
+            z-index: 1;
+            grid-column: 1;
         }
 
+        /* 否按钮 */
         #noBtn {
-            background-color: #808080;
+            background: linear-gradient(135deg, #808080, #696969);
             color: white;
+            grid-column: 2;
+        }
+
+        /* 第二屏样式 */
+        #screen2 .main-img {
+            max-width: min(80%, 300px);
+            margin-top: 40px;
         }
 
         .love-text {
-            font-size: 2.5rem;
+            font-size: clamp(2rem, 8vw, 4rem);
             color: #ff1493;
-            margin: 30px 0;
             display: flex;
-            gap: 20px;
-            opacity: 0;
-            transform: translateY(20px);
-            animation: textReveal 1s ease forwards 0.5s;
+            justify-content: center;
+            gap: 15px;
+            position: relative;
+            margin: 30px 0;
+            perspective: 1000px;
         }
 
-        @keyframes textReveal {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .love-text span {
+            display: inline-block;
+            transform-style: preserve-3d;
+            animation: textFloat 3s ease-in-out infinite;
         }
 
-        @media (min-width: 768px) {
-            .main-img {
-                max-width: 300px;
+        @keyframes textFloat {
+            0%, 100% { transform: translateY(0) rotateX(0); }
+            50% { transform: translateY(-20px) rotateX(20deg); }
+        }
+
+        /* 移动端适配 */
+        @media (max-width: 768px) {
+            .buttons-container {
+                grid-template-columns: 1fr;
+                gap: 20px;
             }
-            h1 {
-                font-size: 2rem;
-            }
-            .love-text {
-                font-size: 3.5rem;
+
+            #yesBtn, #noBtn {
+                grid-column: 1;
+                width: 100%;
             }
         }
     </style>
 </head>
 <body>
+    <!-- 第一屏 -->
     <div id="screen1" class="screen">
-        <img src="images/bear.png" alt="小熊" class="main-img">
+        <img 
+            src="images/bear.png" 
+            alt="小熊" 
+            class="main-img"
+            onerror="this.src='https://cdn.jsdelivr.net/gh/你的用户名/仓库名/images/bear.png'"
+        >
         <h1>要爱我一辈子吗？</h1>
-        <div class="buttons">
-            <button id="yesBtn">是</button>
-            <button id="noBtn">否</button>
+        <div class="buttons-container">
+            <button id="yesBtn" class="btn">是</button>
+            <button id="noBtn" class="btn">否</button>
         </div>
     </div>
 
+    <!-- 第二屏 -->
     <div id="screen2" class="screen hidden">
         <div class="love-text">
             <span>我</span>
             <span>爱</span>
             <span>你</span>
         </div>
-        <img src="images/heart.png" alt="爱心" class="main-img">
+        <img 
+            src="images/heart.png" 
+            alt="爱心" 
+            class="main-img"
+            onerror="this.src='https://cdn.jsdelivr.net/gh/你的用户名/仓库名/images/heart.png'"
+        >
     </div>
 
     <script>
-        // 预加载图片
-        const preloadImages = () => {
-            const images = ['images/bear.png', 'images/heart.png'];
-            images.forEach(src => {
-                new Image().src = src;
-            });
+        // 配置参数
+        const CONFIG = {
+            noMessages: ["你确定吗？", "再想想嘛~", "真的不要吗？", "最后问一次！", "没有后悔药哦！"],
+            maxScale: 1.8,
+            scaleStep: 0.15,
+            spacingStep: 30
         };
-        preloadImages();
 
+        // 状态管理
         let clickCount = 0;
-        const noMessages = ["你确定吗？", "再想想嘛~", "真的不要吗？", "最后问一次！", "没有后悔药哦！"];
         
-        // 否按钮交互
-        document.getElementById('noBtn').addEventListener('click', function() {
-            const yesBtn = document.getElementById('yesBtn');
-            const scale = 1 + Math.min(clickCount * 0.3, 1.5);
-            yesBtn.style.transform = `scale(${scale})`;
-            this.textContent = noMessages[clickCount % noMessages.length];
+        // 元素引用
+        const yesBtn = document.getElementById('yesBtn');
+        const noBtn = document.getElementById('noBtn');
+        const buttonsContainer = document.querySelector('.buttons-container');
+
+        // 否按钮点击处理
+        noBtn.addEventListener('click', () => {
+            // 计算缩放比例
+            const currentScale = 1 + Math.min(clickCount * CONFIG.scaleStep, CONFIG.maxScale - 1);
+            
+            // 是按钮动画
+            yesBtn.style.transform = `scale(${currentScale})`;
+            
+            // 容器间距调整
+            buttonsContainer.style.gap = `${15 + (clickCount * CONFIG.spacingStep)}px`;
+            
+            // 文字渐变效果
+            noBtn.style.opacity = '0';
+            setTimeout(() => {
+                noBtn.textContent = CONFIG.noMessages[clickCount % CONFIG.noMessages.length];
+                noBtn.style.opacity = '1';
+                noBtn.style.transform = 'scale(1)';
+            }, 200);
+
+            // 点击反馈动画
+            noBtn.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                noBtn.style.transform = 'scale(1)';
+            }, 150);
+
             clickCount++;
         });
 
-        // 是按钮交互
-        document.getElementById('yesBtn').addEventListener('click', function() {
-            const screen1 = document.getElementById('screen1');
-            const screen2 = document.getElementById('screen2');
-            
+        // 是按钮点击处理
+        yesBtn.addEventListener('click', () => {
             // 第一屏渐出
-            screen1.classList.add('hidden');
+            document.getElementById('screen1').classList.add('hidden');
             
             // 第二屏延迟渐入
             setTimeout(() => {
-                screen2.classList.remove('hidden');
+                document.getElementById('screen2').classList.remove('hidden');
             }, 500);
 
-            // 按钮缩放重置
-            this.style.transform = 'scale(1)';
+            // 重置状态
+            yesBtn.style.transform = 'scale(1)';
+            buttonsContainer.style.gap = '15px';
         });
 
-        // 图片加载监控
-        document.querySelectorAll('img').forEach(img => {
-            img.onerror = () => {
-                img.style.opacity = '0.5';
-                img.style.filter = 'grayscale(100%)';
+        // 图片预加载
+        window.addEventListener('load', () => {
+            const preloadImage = src => {
+                new Image().src = src;
             };
+            
+            preloadImage('images/bear.png');
+            preloadImage('images/heart.png');
         });
     </script>
 </body>
