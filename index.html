@@ -3,369 +3,268 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>承诺</title>
+    <title>告白小猫</title>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            transition: all 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+        /* 新增心跳动画 */
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
         }
 
         body {
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: #fff;
-            font-family: '微软雅黑', sans-serif;
-            overflow: hidden;
-            position: relative;
-        }
-
-        /* 加载进度条 */
-        .progress-bar-container {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 24px; /* 增加高度以显示文字 */
-            background-color: #f3f3f3;
-            transition: none;
-            z-index: 1000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .progress-bar {
-            position: absolute;
-            left: 0;
-            height: 4px;
-            width: 0%;
-            background-image: linear-gradient(45deg, #ff69b4, #ff1493);
-            transition: width 0.3s ease;
-        }
-
-        .progress-text {
-            font-size: 14px;
-            color: #333;
+            background-color: #f1d5da;
             text-align: center;
-            position: relative;
-            z-index: 10;
-        }
-
-        .screen {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            opacity: 0;
-            visibility: hidden;
-            transition: 
-                opacity 0.8s ease,
-                visibility 0.8s linear;
-            padding: 20px;
-        }
-
-        .screen.visible {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .image-container {
-            position: relative;
-            width: min(90%, 400px);
-            height: 400px;
-            margin: 20px 0;
+            font-family: 'Comic Sans MS', cursive;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
             overflow: hidden;
         }
 
-        .main-img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            opacity: 0;
-            position: absolute;
-            top: 0;
-            left: 0;
-            transition: opacity 0.8s ease;
+        .container {
+            position: relative;
+            width: 90%;
+            max-width: 500px;
+            margin: auto;
+            top: 50%;
+            transform: translateY(-50%);
         }
 
-        .main-img.active {
-            opacity: 1;
+        #mainImage {
+            width: 200px;
+            animation: heartbeat 1.2s infinite;
+            transition: all 0.3s ease;
+            position: relative; /* 确保层级 */
+            z-index: 2; /* 图片位于按钮上方 */
+            will-change: transform; /* 优化动画性能 */
         }
 
         h1 {
-            font-size: clamp(1.5rem, 5vw, 2.5rem);
-            margin: 15px 0;
-            color: #333;
-            text-align: center;
-            z-index: 10;
-            position: relative;
+            font-size: 5vw;
+            color: #68495b;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+            position: relative; /* 确保层级 */
+            z-index: 2; /* 文字位于按钮上方 */
+            will-change: transform; /* 优化动画性能 */
         }
 
-        .buttons-container {
-            margin-top: 30px;
-            display: grid;
-            gap: 15px;
-            grid-template-columns: repeat(2, 1fr);
-            max-width: 500px;
-            width: 100%;
-        }
-
-        .btn {
-            padding: 12px 30px;
-            font-size: clamp(1rem, 4vw, 1.2rem);
-            border: none;
-            border-radius: 30px;
-            cursor: pointer;
-            transition: 
-                transform 0.3s ease,
-                filter 0.3s ease;
-            will-change: transform;
-            z-index: 5;
-        }
-
-        #yesBtn {
-            background: linear-gradient(135deg, #ff69b4, #ff1493);
-            color: white;
-        }
-
-        #noBtn {
-            background: linear-gradient(135deg, #808080, #696969);
-            color: white;
-        }
-
-        #screen2 {
-            flex-direction: column;
-            align-items: center;
-        }
-
-        #screen2 .love-text {
-            font-size: clamp(2rem, 8vw, 4rem);
-            color: #ff1493;
+        .buttons {
             display: flex;
-            gap: 15px;
-            margin: 30px 0;
-            animation: textFloat 3s ease-in-out infinite;
-            z-index: 10;
-            position: relative;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            position: relative; /* 确保层级 */
+            z-index: 1; /* 按钮位于较低层级 */
         }
 
-        #screen2 .main-img {
-            position: relative;
-            margin-top: 20px;
+        button {
+            font-size: 4vw;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 100px;
+            position: relative; /* 确保层级 */
+            z-index: 1; /* 按钮位于较低层级 */
         }
 
-        /* 新增文字内容样式 */
-        .image-text {
-            position: absolute;
-            top: 10px; /* 文字位于图片头顶 */
-            width: 100%;
-            text-align: center;
-            color: #ff69b4; /* 粉色字体 */
-            font-size: 18px;
-            font-weight: bold;
-            z-index: 10; /* 确保文字在图片上方 */
+        #yes {
+            background: linear-gradient(145deg, #ff758c, #ff7eb3);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
 
-        /* 新增音乐控制样式 */
+        #no {
+            background: linear-gradient(145deg, #6784b1, #7b9ccc);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: relative; /* 确保层级 */
+            z-index: 1; /* 按钮位于较低层级 */
+        }
+
+        /* 音乐控制按钮 */
         .music-control {
             position: fixed;
-            bottom: 20px;
+            top: 20px;
             right: 20px;
-            z-index: 100;
-            width: 40px;
-            height: 40px;
-            background: rgba(255,255,255,0.9);
-            border-radius: 50%;
+            background: none;
+            border: none;
             cursor: pointer;
+            font-size: 24px;
+            color: #68495b;
+            z-index: 3;
+        }
+
+        /* 成功页面样式 */
+        .yes-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: #ffdae0;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            transition: transform 0.3s ease;
+            animation: fadeIn 0.5s ease;
         }
 
-        .music-control:hover {
-            transform: scale(1.1);
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
         }
 
-        @keyframes textFloat {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+        .yes-text {
+            font-size: 8vw;
+            color: #ff3b6d;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            animation: float 2s ease-in-out infinite;
         }
 
-        @media (max-width: 768px) {
-            .buttons-container {
-                grid-template-columns: 1fr;
-            }
-            
-            .image-container {
-                height: 300px;
-            }
+        .yes-image {
+            width: 250px;
+            margin-top: 30px;
+            animation: heartbeat 1.2s infinite;
+        }
 
-            .music-control {
-                bottom: 10px;
-                right: 10px;
+        /* 电脑端优化 */
+        @media (min-width: 768px) {
+            #mainImage { width: 250px; }
+            h1 { font-size: 28px; }
+            button {
+                font-size: 20px;
+                padding: 15px 30px;
             }
+            .yes-text { font-size: 48px; }
+            .yes-image { width: 300px; }
         }
     </style>
-    <link rel="preconnect" href="https://your-cdn-domain.com">
-    <link rel="preload" as="image" href="images/no1.png">
-    <link rel="preload" as="image" href="images/yes.png">
 </head>
 <body>
-    <!-- 加载进度条 -->
-    <div class="progress-bar-container">
-        <div class="progress-bar" id="progressBar"></div>
-        <div class="progress-text">加载中...</div> <!-- 新增加载文字 -->
-    </div>
-
-    <!-- 音乐播放器 -->
-    <audio id="bgMusic" loop>
+    <!-- 背景音乐 -->
+    <audio id="bg-music" loop>
         <source src="music.mp3" type="audio/mpeg">
-        <source src="music.ogg" type="audio/ogg">
-        您的浏览器不支持音频播放
+        您的浏览器不支持音频播放。
     </audio>
-    <div class="music-control" id="musicControl">🎵</div>
 
-    <!-- 第一屏 -->
-    <div id="screen1" class="screen visible">
-        <div class="image-container">
-            <div class="image-text">爱ta就要爱ta全部</div> <!-- 粉色文字 -->
-            <img src="images/no1.png" class="main-img active" alt="小熊1" decoding="async">
-            <img src="images/no2.png" class="main-img" alt="小熊2" decoding="async">
-            <img src="images/no3.png" class="main-img" alt="小熊3" decoding="async">
-            <img src="images/no4.png" class="main-img" alt="小熊4" decoding="async">
-            <img src="images/no5.png" class="main-img" alt="小熊5" decoding="async">
-        </div>
-        <h1>你会一直爱我吗？</h1>
-        <div class="buttons-container">
-            <button id="yesBtn" class="btn">是</button>
-            <button id="noBtn" class="btn">否</button>
-        </div>
-    </div>
+    <!-- 音乐控制按钮 -->
+    <button class="music-control" id="music-toggle">🎵</button>
 
-    <!-- 第二屏 -->
-    <div id="screen2" class="screen">
-        <div class="love-text">
-            <span>我</span>
-            <span>爱</span>
-            <span>你</span>
+    <div class="container">
+        <img id="mainImage" src="images/no1.png" alt="爱心">
+        <h1 id="question">可以成为我的恋人吗？</h1>
+        <div class="buttons">
+            <button id="yes">当然可以！</button>
+            <button id="no">再想想...</button>
         </div>
-        <img src="images/yes.png" class="main-img" alt="爱心" decoding="async">
     </div>
 
     <script>
-        // 加载进度条
-        const progressBar = document.getElementById('progressBar');
-
-        // 图片预加载
-        window.addEventListener('load', () => {
-            const imagesToPreload = [
-                'images/no2.png',
-                'images/no3.png',
-                'images/no4.png',
-                'images/no5.png',
-                'images/yes.png'
-            ];
-
-            let loadedCount = 0;
-            const imagesList = imagesToPreload.map(src => {
-                return new Promise((resolve) => {
-                    const img = new Image();
-                    img.src = src;
-                    img.onload = () => resolve();
-                });
-            });
-
-            // 更新进度条
-            const updateProgress = () => {
-                const progress = (loadedCount / imagesToPreload.length) * 100;
-                progressBar.style.width = `${progress}%`;
-            };
-
-            Promise.all(imagesList).then(() => {
-                // 隐藏进度条
-                progressBar.style.opacity = '0';
-                setTimeout(() => {
-                    progressBar.style.display = 'none';
-                }, 500);
-            });
-
-            imagesList.forEach(promise => {
-                promise.then(() => {
-                    loadedCount++;
-                    updateProgress();
-                });
-            });
-        });
-
-        // 音乐控制
-        const bgMusic = document.getElementById('bgMusic');
-        const musicControl = document.getElementById('musicControl');
-        let isFirstClick = true;
-
-        // 首次交互后启动音乐
-        document.addEventListener('click', () => {
-            if (isFirstClick) {
-                bgMusic.play().catch(() => {});
-                musicControl.textContent = bgMusic.paused ? '🔇' : '🔊';
-                isFirstClick = false;
-            }
-        }, { once: true });
-
-        // 音乐开关
-        musicControl.addEventListener('click', () => {
-            bgMusic.paused ? bgMusic.play() : bgMusic.pause();
-            musicControl.textContent = bgMusic.paused ? '🔇' : '🔊';
-        });
-
-        // 原有交互逻辑
-        const CONFIG = {
-            noMessages: ["你确定吗？", "再想想嘛~", "真的不要吗？", "最后问一次！", "没有后悔药哦！"],
-            maxScale: 1.8,
-            imageCount: 5
+        // 常量配置
+        const interactions = {
+            texts: ["真的要拒绝吗？", "我会很难过的...", "没有你不行！", "求你再想想", "最后的机会了！"],
+            moves: [30, -40, 50, -60, 70],
+            images: ["images/no1.png", "images/no2.png", "images/no3.png", "images/no4.png", "images/no5.png"]
         };
 
-        let currentImageIndex = 0;
+        const yesButton = document.getElementById("yes");
+        const noButton = document.getElementById("no");
+        const questionText = document.getElementById("question");
+        const mainImage = document.getElementById("mainImage");
+        const bgMusic = document.getElementById("bg-music");
+        const musicToggle = document.getElementById("music-toggle");
         let clickCount = 0;
-        const images = document.querySelectorAll('.main-img');
-        const noBtn = document.getElementById('noBtn');
-        const yesBtn = document.getElementById('yesBtn');
 
-        function changeImage() {
-            images[currentImageIndex].classList.remove('active');
-            currentImageIndex = (currentImageIndex + 1) % CONFIG.imageCount;
-            setTimeout(() => {
-                images[currentImageIndex].classList.add('active');
-            }, 400);
-        }
+        // 自动播放背景音乐
+        bgMusic.play();
 
-        noBtn.addEventListener('click', () => {
-            noBtn.style.transform = 'scale(0.95)';
-            setTimeout(() => noBtn.style.transform = 'scale(1)', 150);
-
-            noBtn.style.opacity = '0';
-            setTimeout(() => {
-                noBtn.textContent = CONFIG.noMessages[clickCount % CONFIG.noMessages.length];
-                noBtn.style.opacity = '1';
-                changeImage();
-                clickCount++;
-            }, 200);
-
-            yesBtn.style.transform = `scale(${1 + clickCount * 0.15})`;
+        // 音乐控制按钮
+        musicToggle.addEventListener("click", () => {
+            if (bgMusic.paused) {
+                bgMusic.play();
+                musicToggle.textContent = "🎵";
+            } else {
+                bgMusic.pause();
+                musicToggle.textContent = "🔇";
+            }
         });
 
-        yesBtn.addEventListener('click', () => {
-            document.getElementById('screen1').classList.remove('visible');
-            document.getElementById('screen2').classList.add('visible');
-            document.querySelector('#screen2 .main-img').classList.add('active');
+        noButton.addEventListener("click", function() {
+            clickCount++;
+            
+            // 动态移动效果
+            const moveX = interactions.moves[Math.min(clickCount-1, 4)] || 
+                        (Math.random() * 100 - 50);
+            noButton.style.transform = `translateX(${moveX}px) rotate(${moveX/2}deg)`;
+            
+            // 逐渐放大确定按钮
+            yesButton.style.transform = `scale(${1 + clickCount*0.3})`;
+
+            // 更新内容和样式
+            if (clickCount <= 5) {
+                noButton.textContent = interactions.texts[clickCount-1];
+                mainImage.src = interactions.images[clickCount-1];
+            }
+
+            // 五次点击后开启随机移动模式
+            if (clickCount > 5) {
+                const randomX = Math.random() * 200 - 100;
+                const randomY = Math.random() * 50 - 25;
+                noButton.style.transform = `translate(${randomX}px, ${randomY}px)`;
+                noButton.style.transition = "all 0.2s ease";
+            }
+
+            // 添加抖动动画
+            questionText.style.animation = "shake 0.4s ease";
+            setTimeout(() => questionText.style.animation = "", 400);
+
+            // 播放失落的音效
+            const sadSound = new Audio("music/sad-sound.mp3");
+            sadSound.play();
+        });
+
+        yesButton.addEventListener("click", () => {
+            // 播放开心的音效
+            const happySound = new Audio("music/happy-sound.mp3");
+            happySound.play();
+
+            document.body.innerHTML = `
+                <div class="yes-screen">
+                    <h1 class="yes-text">最喜欢你啦！(≧ triangle Δ) ♡</h1>
+                    <img src="images/yes.png" alt="拥抱" class="yes-image">
+                    <p style="margin-top:20px;color:#ff3b6d;">我们明天去约会吧～</p>
+                </div>
+            `;
+            
+            // 添加飘落爱心
+            createHearts();
+        });
+
+        // 创建飘落爱心
+        function createHearts() {
+            const colors = ["#ff3b6d", "#ff6b88", "#ff8da1"];
+            for(let i=0; i<30; i++) {
+                const heart = document.createElement("div");
+                heart.style.cssText = `
+                    position: absolute;
+                    color: ${colors[i%3]};
+                    font-size: ${20 + Math.random()*20}px;
+                    left: ${Math.random()*100}%;
+                    top: -50px;
+                    animation: fall ${6 + Math.random()*4}s linear infinite;
+                    pointer-events: none;
+                `;
+                heart.innerHTML = "❤";
+                document.body.appendChild(heart);
+            }
+        }
+
+        // 添加键盘事件
+        document.addEventListener("keydown", (e) => {
+            if (e.key === "Escape") location.reload();
         });
     </script>
 </body>
