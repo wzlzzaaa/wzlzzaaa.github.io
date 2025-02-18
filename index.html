@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -36,9 +35,9 @@
             width: 200px;
             animation: heartbeat 1.2s infinite;
             transition: all 0.3s ease;
-            position: relative; /* 确保层级 */
-            z-index: 2; /* 图片位于按钮上方 */
-            will-change: transform; /* 优化动画性能 */
+            position: relative;
+            z-index: 2;
+            will-change: transform;
         }
 
         h1 {
@@ -46,9 +45,9 @@
             color: #68495b;
             margin: 20px 0;
             transition: all 0.3s ease;
-            position: relative; /* 确保层级 */
-            z-index: 2; /* 文字位于按钮上方 */
-            will-change: transform; /* 优化动画性能 */
+            position: relative;
+            z-index: 2;
+            will-change: transform;
         }
 
         .buttons {
@@ -56,8 +55,8 @@
             justify-content: center;
             gap: 20px;
             flex-wrap: wrap;
-            position: relative; /* 确保层级 */
-            z-index: 1; /* 按钮位于较低层级 */
+            position: relative;
+            z-index: 1;
         }
 
         button {
@@ -68,8 +67,8 @@
             cursor: pointer;
             transition: all 0.3s ease;
             min-width: 100px;
-            position: relative; /* 确保层级 */
-            z-index: 1; /* 按钮位于较低层级 */
+            position: relative;
+            z-index: 1;
         }
 
         #yes {
@@ -80,11 +79,10 @@
         #no {
             background: linear-gradient(145deg, #6784b1, #7b9ccc);
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            position: relative; /* 确保层级 */
-            z-index: 1; /* 按钮位于较低层级 */
+            position: relative;
+            z-index: 1;
         }
 
-        /* 音乐控制按钮 */
         .music-control {
             position: fixed;
             top: 20px;
@@ -97,7 +95,6 @@
             z-index: 3;
         }
 
-        /* 成功页面样式 */
         .yes-screen {
             position: fixed;
             top: 0;
@@ -131,7 +128,6 @@
             animation: heartbeat 1.2s infinite;
         }
 
-        /* 电脑端优化 */
         @media (min-width: 768px) {
             #mainImage { width: 250px; }
             h1 { font-size: 28px; }
@@ -141,6 +137,29 @@
             }
             .yes-text { font-size: 48px; }
             .yes-image { width: 300px; }
+        }
+
+        /* 页面渐变效果 */
+        .container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .page {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            opacity: 1;
+            transition: opacity 0.6s ease;
+        }
+
+        #successPage {
+            opacity: 0;
+            display: none;
         }
     </style>
 </head>
@@ -154,12 +173,24 @@
     <!-- 音乐控制按钮 -->
     <button class="music-control" id="music-toggle">🎵</button>
 
-    <div class="container">
-        <img id="mainImage" src="images/heart.png" alt="爱心">
-        <h1 id="question">可以成为我的恋人吗？</h1>
-        <div class="buttons">
-            <button id="yes">当然可以！</button>
-            <button id="no">再想想...</button>
+    <div id="mainContainer" class="container">
+        <!-- 第一版内容 -->
+        <div id="initialPage" class="page">
+            <img id="mainImage" src="images/no1.png" alt="爱心">
+            <h1 id="question">可以成为我的恋人吗？</h1>
+            <div class="buttons">
+                <button id="yes">当然可以！</button>
+                <button id="no">再想想...</button>
+            </div>
+        </div>
+
+        <!-- 第二版内容（初始隐藏） -->
+        <div id="successPage" class="page">
+            <div class="yes-screen">
+                <h1 class="yes-text">最喜欢你啦！(≧ triangle Δ) ♡</h1>
+                <img src="images/yes.png" alt="拥抱" class="yes-image">
+                <p style="margin-top:20px;color:#ff3b6d;">我们明天去约会吧～</p>
+            </div>
         </div>
     </div>
 
@@ -178,14 +209,17 @@
         const bgMusic = document.getElementById("bg-music");
         const musicToggle = document.getElementById("music-toggle");
         let clickCount = 0;
+        let userInteracted = false; // 用户交互标志
 
-        // 自动播放背景音乐
-        bgMusic.play();
+        // 禁止自动播放音频
+        bgMusic.play(); // 尝试播放，解决某些浏览器自动播放问题
 
         // 音乐控制按钮
         musicToggle.addEventListener("click", () => {
             if (bgMusic.paused) {
-                bgMusic.play();
+                bgMusic.play().catch(() => {
+                    console.log("音频播放失败");
+                });
                 musicToggle.textContent = "🎵";
             } else {
                 bgMusic.pause();
@@ -193,12 +227,28 @@
             }
         });
 
+        // 用户第一次交互时播放音频
+        function handleUserInteraction() {
+            if (!userInteracted) {
+                bgMusic.play().catch(() => {
+                    console.log("音频播放失败");
+                });
+                userInteracted = true;
+            }
+        }
+
+        // 监听用户的第一次交互
+        document.addEventListener("click", handleUserInteraction, { once: true });
+        document.addEventListener("touchstart", handleUserInteraction, { once: true });
+        document.addEventListener("keydown", handleUserInteraction, { once: true });
+
         noButton.addEventListener("click", function() {
+            handleUserInteraction(); // 触发用户交互
+
             clickCount++;
             
             // 动态移动效果
-            const moveX = interactions.moves[Math.min(clickCount-1, 4)] || 
-                        (Math.random() * 100 - 50);
+            const moveX = interactions.moves[Math.min(clickCount-1, 4)] || (Math.random() * 100 - 50);
             noButton.style.transform = `translateX(${moveX}px) rotate(${moveX/2}deg)`;
             
             // 逐渐放大确定按钮
@@ -228,20 +278,28 @@
         });
 
         yesButton.addEventListener("click", () => {
-            // 播放开心的音效
-            const happySound = new Audio("music/happy-sound.mp3");
-            happySound.play();
+            handleUserInteraction(); // 触发用户交互
 
-            document.body.innerHTML = `
-                <div class="yes-screen">
-                    <h1 class="yes-text">最喜欢你啦！(≧ triangle Δ) ♡</h1>
-                    <img src="images/yes.png" alt="拥抱" class="yes-image">
-                    <p style="margin-top:20px;color:#ff3b6d;">我们明天去约会吧～</p>
-                </div>
-            `;
-            
-            // 添加飘落爱心
-            createHearts();
+            // 淡出第一版内容
+            const initialPage = document.getElementById("initialPage");
+            const successPage = document.getElementById("successPage");
+
+            initialPage.style.opacity = 0;
+            initialPage.style.pointerEvents = "none"; // 禁止交互
+
+            // 延迟等待淡出完成
+            setTimeout(() => {
+                initialPage.style.display = "none";
+                successPage.style.display = "block";
+                successPage.style.opacity = 1;
+
+                // 播放开心的音效
+                const happySound = new Audio("music/happy-sound.mp3");
+                happySound.play();
+
+                // 添加飘落爱心
+                createHearts();
+            }, 600); // 与CSS过渡时间一致
         });
 
         // 创建飘落爱心
