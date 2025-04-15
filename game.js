@@ -24,14 +24,71 @@ function init() {
     canvas.width = 800;
     canvas.height = 600;
     
-    // 加载水果图片
+    // 创建加载容器
+    const loadingContainer = document.createElement('div');
+    loadingContainer.style.position = 'absolute';
+    loadingContainer.style.top = '50%';
+    loadingContainer.style.left = '50%';
+    loadingContainer.style.transform = 'translate(-50%, -50%)';
+    loadingContainer.style.textAlign = 'center';
+    
+    // 加载文本
+    const loadingText = document.createElement('div');
+    loadingText.style.font = '24px Arial';
+    loadingText.style.marginBottom = '10px';
+    
+    // 进度条容器
+    const progressBarContainer = document.createElement('div');
+    progressBarContainer.style.width = '300px';
+    progressBarContainer.style.height = '20px';
+    progressBarContainer.style.border = '1px solid #000';
+    progressBarContainer.style.borderRadius = '10px';
+    progressBarContainer.style.overflow = 'hidden';
+    progressBarContainer.style.marginBottom = '10px';
+    
+    // 进度条
+    const progressBar = document.createElement('div');
+    progressBar.style.height = '100%';
+    progressBar.style.width = '0%';
+    progressBar.style.backgroundColor = '#4CAF50';
+    progressBar.style.transition = 'width 0.3s';
+    
+    // 预计时间文本
+    const timeText = document.createElement('div');
+    timeText.style.font = '16px Arial';
+    
+    // 组装元素
+    progressBarContainer.appendChild(progressBar);
+    loadingContainer.appendChild(loadingText);
+    loadingContainer.appendChild(progressBarContainer);
+    loadingContainer.appendChild(timeText);
+    document.body.appendChild(loadingContainer);
+    
+    // 预加载所有图片
+    let loadedCount = 0;
+    const startTime = Date.now();
     FRUIT_TYPES.forEach(fruit => {
         fruit.img = new Image();
+        fruit.img.onload = () => {
+            loadedCount++;
+            const progress = (loadedCount / FRUIT_TYPES.length) * 100;
+            progressBar.style.width = `${progress}%`;
+            
+            // 计算预计剩余时间
+            const elapsedTime = (Date.now() - startTime) / 1000;
+            const remainingTime = (elapsedTime / loadedCount) * (FRUIT_TYPES.length - loadedCount);
+            
+            loadingText.textContent = `加载中... ${loadedCount}/${FRUIT_TYPES.length} (${progress.toFixed(1)}%)`;
+            timeText.textContent = `预计剩余时间: ${remainingTime.toFixed(1)}秒`;
+            
+            if (loadedCount === FRUIT_TYPES.length) {
+                document.body.removeChild(loadingContainer);
+                // 游戏循环
+                setInterval(gameLoop, 1000/60);
+            }
+        };
         fruit.img.src = fruit.image;
     });
-    
-    // 游戏循环
-    setInterval(gameLoop, 1000/60);
 }
 
 // 游戏主循环
