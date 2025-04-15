@@ -1,16 +1,16 @@
 // 游戏常量
 const FRUIT_TYPES = [
-    { name: '樱桃', size: 30, image: '樱桃.jpg', points: 1 },
-    { name: '葡萄', size: 40, image: '葡萄.jpg', points: 2 },
-    { name: '橘子', size: 50, image: '橘子.jpg', points: 3 },
-    { name: '猕猴桃', size: 60, image: '猕猴桃.jpg', points: 4 },
-    { name: '西红柿', size: 70, image: '西红柿.jpg', points: 5 },
-    { name: '桃', size: 80, image: '桃.jpg', points: 6 },
-    { name: '菠萝', size: 90, image: '菠萝.jpg', points: 7 },
-    { name: '椰子', size: 100, image: '椰子.jpg', points: 8 },
-    { name: '柠檬', size: 110, image: '柠檬.jpg', points: 9 },
-    { name: '西瓜', size: 120, image: '西瓜.jpg', points: 10 },
-    { name: '大西瓜', size: 150, image: '大西瓜.jpg', points: 20 }
+    { name: '樱桃', size: 30, image: '樱桃.webp', points: 1 },
+    { name: '葡萄', size: 40, image: '葡萄.webp', points: 2 },
+    { name: '橘子', size: 50, image: '橘子.webp', points: 3 },
+    { name: '猕猴桃', size: 60, image: '猕猴桃.webp', points: 4 },
+    { name: '西红柿', size: 70, image: '西红柿.webp', points: 5 },
+    { name: '桃', size: 80, image: '桃.webp', points: 6 },
+    { name: '菠萝', size: 90, image: '菠萝.webp', points: 7 },
+    { name: '椰子', size: 100, image: '椰子.webp', points: 8 },
+    { name: '柠檬', size: 110, image: '柠檬.webp', points: 9 },
+    { name: '西瓜', size: 120, image: '西瓜.webp', points: 10 },
+    { name: '大西瓜', size: 150, image: '大西瓜.webp', points: 20 }
 ];
 
 // 游戏状态
