@@ -57,11 +57,27 @@ function init() {
     const timeText = document.createElement('div');
     timeText.style.font = '16px Arial';
     
+    // 跳过加载按钮
+    const skipButton = document.createElement('button');
+    skipButton.textContent = '跳过加载直接游玩';
+    skipButton.style.padding = '10px 20px';
+    skipButton.style.marginTop = '20px';
+    skipButton.style.fontSize = '16px';
+    skipButton.style.cursor = 'pointer';
+    skipButton.style.backgroundColor = '#f0f0f0';
+    skipButton.style.border = '1px solid #ccc';
+    skipButton.style.borderRadius = '5px';
+    skipButton.onclick = function() {
+        document.body.removeChild(loadingContainer);
+        setInterval(gameLoop, 1000/60);
+    };
+    
     // 组装元素
     progressBarContainer.appendChild(progressBar);
     loadingContainer.appendChild(loadingText);
     loadingContainer.appendChild(progressBarContainer);
     loadingContainer.appendChild(timeText);
+    loadingContainer.appendChild(skipButton);
     document.body.appendChild(loadingContainer);
     
     // 预加载所有图片
