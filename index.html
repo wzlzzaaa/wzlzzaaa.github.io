@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>选择入口 · 大西瓜 / 氛围灯</title>
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      background: radial-gradient(1200px 800px at 50% 0%, #0b1220, #05070d 55%, #000 100%);
+      color: #fff;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .wrap {
+      min-height: 100%;
+      display: grid;
+      place-items: center;
+      padding: 28px 18px;
+    }
+
+    .grid {
+      width: min(920px, 94vw);
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    @media (max-width: 680px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+
+    .card {
+      position: relative;
+      border-radius: 18px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.05);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.45);
+      transition: transform 120ms ease, box-shadow 160ms ease, border-color 160ms ease;
+    }
+
+    .card:hover { transform: translateY(-2px); box-shadow: 0 26px 60px rgba(0,0,0,0.55); border-color: rgba(255,255,255,0.2); }
+    .card:active { transform: translateY(0); }
+
+    .card a {
+      display: flex;
+      text-decoration: none;
+      color: inherit;
+      padding: 22px 22px 22px 22px;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .emoji {
+      font-size: 42px;
+      width: 56px;
+      height: 56px;
+      display: grid;
+      place-items: center;
+      background: rgba(0,0,0,0.35);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 14px;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06);
+    }
+
+    .title {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+      margin: 0 0 6px 0;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+    }
+
+    .desc {
+      margin: 0;
+      opacity: 0.85;
+      line-height: 1.6;
+    }
+
+    .footer {
+      position: fixed; left: 10px; bottom: 10px; opacity: 0.55; font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="grid">
+      <div class="card">
+        <a href="./大西瓜/index.html" aria-label="进入大西瓜游戏">
+          <div class="emoji">🍉</div>
+          <div>
+            <h2 class="title">大西瓜</h2>
+        
+          </div>
+        </a>
+      </div>
+      <div class="card">
+        <a href="./氛围灯/index.html" aria-label="进入氛围灯">
+          <div class="emoji">🌈</div>
+          <div>
+            <h2 class="title">氛围灯</h2>
+           
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+  <div class="footer">请选择进入内容 · 如果无响应，请检查子目录文件是否存在</div>
+</body>
+</html>
+
+
