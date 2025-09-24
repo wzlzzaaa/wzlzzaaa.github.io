@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>合成大西瓜 - 优化版</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #f8f8f8;
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            touch-action: manipulation;
+        }
+        
+        .game-container {
+            position: relative;
+            margin: 0 auto;
+            max-width: 100%;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        canvas {
+            display: block;
+            background-color: #fff;
+            touch-action: none; /* 防止移动设备上的默认触摸行为 */
+        }
+        
+        #restartButton {
+            position: absolute;
+            top: 65%;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 12px 24px;
+            font-size: 18px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            display: none;
+            transition: background-color 0.3s;
+            z-index: 10;
+        }
+        
+        #restartButton:hover {
+            background-color: #45a049;
+        }
+        
+        .game-title {
+            text-align: center;
+            margin: 10px 0;
+            color: #333;
+            font-size: 24px;
+        }
+        
+        .game-instructions {
+            margin: 10px auto;
+            max-width: 800px;
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+            padding: 0 15px;
+        }
+        
+        .loading-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+        
+        .loading-bar {
+            width: 80%;
+            height: 20px;
+            background-color: #eee;
+            border-radius: 10px;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+        
+        .loading-progress {
+            height: 100%;
+            background-color: #4CAF50;
+            width: 0;
+            transition: width 0.3s;
+        }
+        
+        .difficulty-selector {
+            margin-top: 10px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        
+        .difficulty-btn {
+            padding: 8px 15px;
+            background-color: #ddd;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .difficulty-btn.active {
+            background-color: #4CAF50;
+            color: white;
+        }
+        
+        /* 媒体查询优化移动设备显示 */
+        @media (max-width: 768px) {
+            .game-title {
+                font-size: 20px;
+            }
+            
+            .game-instructions {
+                font-size: 12px;
+            }
+            
+            #restartButton {
+                padding: 10px 20px;
+                font-size: 16px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .game-instructions {
+                padding: 0 10px;
+            }
+            
+            .difficulty-selector {
+                flex-direction: column;
+                gap: 5px;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1 class="game-title">合成大西瓜 - 优化版</h1>
+    <div class="difficulty-selector">
+        <button class="difficulty-btn" data-difficulty="easy">简单模式</button>
+        <button class="difficulty-btn active" data-difficulty="normal">普通模式</button>
+        <button class="difficulty-btn" data-difficulty="hard">困难模式</button>
+    </div>
+    <div class="game-container">
+        <canvas id="gameCanvas"></canvas>
+        <button id="restartButton">重新开始</button>
+        <div class="loading-screen" id="loadingScreen">
+            <h2>正在加载游戏资源...</h2>
+            <div class="loading-bar">
+                <div class="loading-progress" id="loadingProgress"></div>
+            </div>
+        </div>
+    </div>
+    <p class="game-instructions">
+        点击顶部绿色区域放置水果，相同水果碰撞后合成更大的水果。当水果堆到顶部时游戏结束。<br>
+        <strong>新功能:</strong> 连续合并可获得连击奖励！收集道具获得特殊能力：💣炸弹 🧲磁铁 ❄️冰冻 ✖️双倍 🛡️护盾<br>
+        键盘控制: 左右箭头移动预览，空格键放置水果，P键暂停，M键音乐开关，R键重新开始
+    </p>
+    
+    <!-- 模块化JS文件 -->
+    <script src="assets.js"></script>
+    <script src="objectPool.js"></script>
+    <script src="particles.js"></script>
+    <script src="ui.js"></script>
+    <script src="combo_powerup_system.js"></script>
+    <script src="game.js"></script>
+    
+    <script>
+        // 设置难度选择器
+        document.querySelectorAll('.difficulty-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                // 移除所有active类
+                document.querySelectorAll('.difficulty-btn').forEach(b => b.classList.remove('active'));
+                // 添加active类到当前按钮
+                this.classList.add('active');
+                
+                // 获取游戏实例并设置难度
+                const difficulty = this.getAttribute('data-difficulty');
+                if (window.game) {
+                    window.game.setDifficulty(difficulty);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

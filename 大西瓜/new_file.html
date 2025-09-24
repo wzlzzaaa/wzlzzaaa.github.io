@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>交互式笑脸</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+        }
+        
+        .container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+        }
+        
+        .face-container {
+            font-size: 150px;
+            margin-bottom: 50px;
+            position: relative;
+            height: 150px;
+        }
+        
+        .face {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.3s ease;
+        }
+        
+        .eyes {
+            position: absolute;
+            top: 50px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            pointer-events: none;
+        }
+        
+        .eye {
+            width: 20px;
+            height: 20px;
+            background-color: black;
+            border-radius: 50%;
+            margin: 0 30px;
+            position: relative;
+            transition: transform 0.1s ease-out;
+        }
+        
+        .buttons {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            margin-top: 20px;
+        }
+        
+        button {
+            padding: 15px 30px;
+            font-size: 18px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            transition: transform 0.2s;
+        }
+        
+        #accept {
+            background-color: #4CAF50;
+            color: white;
+        }
+        
+        #reject {
+            background-color: #f44336;
+            color: white;
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="face-container" id="face-container">
+            <div class="face" id="face-happy">😀</div>
+            <div class="face" id="face-neutral">🙂</div>
+            <div class="face" id="face-scared">😨</div>
+        </div>
+        <div class="buttons">
+            <button id="accept">接受</button>
+            <button id="reject">拒绝</button>
+        </div>
+    </div>
+
+    <script>
+        const faceContainer = document.getElementById('face-container');
+        const faceHappy = document.getElementById('face-happy');
+        const faceNeutral = document.getElementById('face-neutral');
+        const faceScared = document.getElementById('face-scared');
+        const acceptBtn = document.getElementById('accept');
+        const rejectBtn = document.getElementById('reject');
+        
+        // 设置初始表情
+        faceHappy.style.opacity = 1;
+        faceNeutral.style.opacity = 0;
+        faceScared.style.opacity = 0;
+        
+        // 眼睛跟随鼠标移动
+        document.addEventListener('mousemove', (e) => {
+            const mouseX = e.clientX;
+            const mouseY = e.clientY;
+            
+            const faceRect = faceContainer.getBoundingClientRect();
+            const faceCenterX = faceRect.left + faceRect.width / 2;
+            const faceCenterY = faceRect.top + faceRect.height / 2;
+            
+            // 计算鼠标与脸的相对位置
+            const deltaX = mouseX - faceCenterX;
+            const deltaY = mouseY - faceCenterY;
+            
+            // 转换为眼睛移动，限制在合理范围内
+            const eyeX = Math.max(-10, Math.min(10, deltaX / 20));
+            const eyeY = Math.max(-10, Math.min(10, deltaY / 20));
+            
+            // 应用眼睛移动
+            document.querySelectorAll('.eye').forEach(eye => {
+                eye.style.transform = `translate(${eyeX}px, ${eyeY}px)`;
+            });
+            
+            // 根据鼠标与按钮的距离改变表情
+            const rejectRect = rejectBtn.getBoundingClientRect();
+            const rejectCenterX = rejectRect.left + rejectRect.width / 2;
+            const rejectCenterY = rejectRect.top + rejectRect.height / 2;
+            
+            const acceptRect = acceptBtn.getBoundingClientRect();
+            const acceptCenterX = acceptRect.left + acceptRect.width / 2;
+            const acceptCenterY = acceptRect.top + acceptRect.height / 2;
+            
+            // 计算鼠标到按钮的距离
+            const distToReject = Math.sqrt(
+                Math.pow(mouseX - rejectCenterX, 2) + 
+                Math.pow(mouseY - rejectCenterY, 2)
+            );
+            
+            const distToAccept = Math.sqrt(
+                Math.pow(mouseX - acceptCenterX, 2) + 
+                Math.pow(mouseY - acceptCenterY, 2)
+            );
+            
+            // 计算最大距离（页面对角线长度的一部分）作为参考
+            const maxDist = Math.sqrt(
+                Math.pow(window.innerWidth, 2) + 
+                Math.pow(window.innerHeight, 2)
+            ) * 0.3;
+            
+            // 应用表情渐变
+            if (distToReject < distToAccept) {
+                // 接近拒绝按钮: 😨 -> 😀
+                const normalizedDist = Math.max(0, Math.min(1, distToReject / maxDist));
+                
+                // 设置三个表情的透明度，实现平滑渐变
+                if (normalizedDist < 0.5) {
+                    // 接近拒绝按钮: 显示高兴表情
+                    faceHappy.style.opacity = 1 - normalizedDist * 2;
+                    faceNeutral.style.opacity = normalizedDist * 2;
+                    faceScared.style.opacity = 0;
+                } else {
+                    // 远离拒绝按钮: 显示害怕表情
+                    faceHappy.style.opacity = 0;
+                    faceNeutral.style.opacity = 2 - normalizedDist * 2;
+                    faceScared.style.opacity = normalizedDist * 2 - 1;
+                }
+            } else {
+                // 接近接受按钮: 😀 -> 😨
+                const normalizedDist = Math.max(0, Math.min(1, distToAccept / maxDist));
+                
+                // 设置三个表情的透明度，实现平滑渐变
+                if (normalizedDist < 0.5) {
+                    // 接近接受按钮: 显示害怕表情
+                    faceHappy.style.opacity = 0;
+                    faceNeutral.style.opacity = normalizedDist * 2;
+                    faceScared.style.opacity = 1 - normalizedDist * 2;
+                } else {
+                    // 远离接受按钮: 显示高兴表情
+                    faceHappy.style.opacity = normalizedDist * 2 - 1;
+                    faceNeutral.style.opacity = 2 - normalizedDist * 2;
+                    faceScared.style.opacity = 0;
+                }
+            }
+        });
+        
+        // 拒绝按钮会逃跑
+        rejectBtn.addEventListener('mouseover', () => {
+            const btnWidth = rejectBtn.offsetWidth;
+            const btnHeight = rejectBtn.offsetHeight;
+            
+            // 随机新位置，确保不超出视窗边界
+            const maxX = window.innerWidth - btnWidth;
+            const maxY = window.innerHeight - btnHeight;
+            const newX = Math.max(10, Math.min(maxX - 10, Math.random() * maxX));
+            const newY = Math.max(10, Math.min(maxY - 10, Math.random() * maxY));
+            
+            rejectBtn.style.position = 'fixed';
+            rejectBtn.style.left = `${newX}px`;
+            rejectBtn.style.top = `${newY}px`;
+        });
+        
+        // 接受按钮的点击事件
+        acceptBtn.addEventListener('click', () => {
+            alert('谢谢接受!');
+        });
+        
+        // 拒绝按钮的点击事件
+        rejectBtn.addEventListener('click', () => {
+            alert('你真厉害，居然点到了拒绝按钮!');
+        });
+    </script>
+</body>
+</html>
